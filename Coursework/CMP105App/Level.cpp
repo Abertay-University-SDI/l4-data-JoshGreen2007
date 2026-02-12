@@ -11,9 +11,6 @@ Level::Level(sf::RenderWindow& hwnd, Input& in) :
     // Initialise the Player (Rabbit)
     m_playerRabbit = new Rabbit();
     /*m_playerRabbit->setPosition({40.f, 40.f}); */
-    loadLevel("data/level1.txt", levelSize);
-
-    m_playerRabbit = new Rabbit();
 
     if (!m_rabbitTexture.loadFromFile("gfx/rabbit_sheet.png")) std::cerr << "no rabbit texture";
     if (!m_sheepTexture.loadFromFile("gfx/sheep_sheet.png")) std::cerr << "no sheep texture";
@@ -22,6 +19,7 @@ Level::Level(sf::RenderWindow& hwnd, Input& in) :
     m_playerRabbit->setTexture(&m_rabbitTexture);
     m_playerRabbit->setWorldSize(levelSize.x, levelSize.y);
 
+    loadLevel("data/level1.txt", levelSize);
 
     // Initialise Sheep (initial position AND pointer to the rabbit
     /*for (int i = 0; i < 3; i++)
@@ -31,13 +29,6 @@ Level::Level(sf::RenderWindow& hwnd, Input& in) :
         m_sheepList[i]->setSize({ 32,32 });
         m_sheepList[i]->setWorldSize(levelSize.x, levelSize.y);
     }*/
-
-    for (int i = 0; i < 3; i++)
-    {
-
-        m_sheepList.push_back(new Sheep());
-
-    }
 
     // Initialise Timer
     m_gameTimer.restart();
@@ -116,6 +107,7 @@ void Level::loadLevel(std::string filename, sf::Vector2f worldSize)
             newSheep->setTexture(&m_sheepTexture);
             newSheep->setSize({32, 32});
             newSheep->setWorldSize(worldSize.x, worldSize.y);
+            m_sheepList.push_back(newSheep);
 
         }
 
