@@ -11,7 +11,10 @@ Level::Level(sf::RenderWindow& hwnd, Input& in) :
     // Initialise the Player (Rabbit)
     m_playerRabbit = new Rabbit();
     /*m_playerRabbit->setPosition({40.f, 40.f}); */
-    loadLevel("data/level1.txt");
+    loadLevel("data/level1.txt", levelSize);
+
+    m_playerRabbit = new Rabbit();
+
     if (!m_rabbitTexture.loadFromFile("gfx/rabbit_sheet.png")) std::cerr << "no rabbit texture";
     if (!m_sheepTexture.loadFromFile("gfx/sheep_sheet.png")) std::cerr << "no sheep texture";
     m_playerRabbit->setSize({ 32,32 });
@@ -28,6 +31,13 @@ Level::Level(sf::RenderWindow& hwnd, Input& in) :
         m_sheepList[i]->setSize({ 32,32 });
         m_sheepList[i]->setWorldSize(levelSize.x, levelSize.y);
     }*/
+
+    for (int i = 0; i < 3; i++)
+    {
+
+        m_sheepList.push_back(new Sheep());
+
+    }
 
     // Initialise Timer
     m_gameTimer.restart();
@@ -91,31 +101,55 @@ Level::~Level()
 void Level::loadLevel(std::string filename, sf::Vector2f worldSize)
 {
 
-    std::ifstream inputFile("data/level1.txt");
-    std::string levelData;
-    std::vector interestedIn = { "RABBIT", "SHEEP", "SHEEP", "WALL", "WALL", "GOAL"};
+    std::ifstream inputFile(filename);
+    std::string object;
     float xPosition, yPosition, width, height;
 
-    while (inputFile >> levelData)
+    while (inputFile >> object)
     {
 
-        if (levelData == "RABBIT")
+        if (object == "SHEEP")
+        {
+
             inputFile >> xPosition >> yPosition;
+            Sheep* newSheep = new Sheep(sf::Vector2f(xPosition, yPosition), m_playerRabbit);
+            newSheep->setTexture(&m_sheepTexture);
+            newSheep->setSize({32, 32});
+            newSheep->setWorldSize(worldSize.x, worldSize.y);
 
-        if (levelData == "SHEEP")
+        }
+
+        else if (object == "RABBIT")
+        {
+
             inputFile >> xPosition >> yPosition;
+            m_playerRabbit->setPosition({xPosition, yPosition});
 
-        if (levelData == "SHEEP")
+        }
+
+        else if (object == "GOAL")
+        {
             inputFile >> xPosition >> yPosition;
+            m_goal.setSize({ 50, 50 });
+            m_goal.setFillColor(sf::Color::Blue);
+            m_goal.setPosition({ xPosition, yPosition });
+            m_goal.setCollisionBox({ { 0,0 }, { 50,50 } });
 
-        if (levelData == "WALL")
+        }
+        else if (object == "WALL")
+        {
             inputFile >> xPosition >> yPosition >> width >> height;
-
-        if (levelData == "WALL")
-            inputFile >> xPosition >> yPosition >> width >> height;
-
-        if (levelData == "GOAL")
-            inputFile >> xPosition >> yPosition >> width >> height;
+            GameObject wall;
+            wall.setPosition({ xPosition, yPosition });
+            wall.setSize({ width, height });
+            wall.setFillColor(sf::Color::Black);
+            wall.setCollisionBox({ { 0,0 }, { width, height } });
+            m_walls.push_back(wall);
+        }
+        else
+        {
+            std::cout << "Type " << object << " found, but not recognised\n";
+        }
 
     }
 
