@@ -45,14 +45,13 @@ Level::Level(sf::RenderWindow& hwnd, Input& in) :
     m_winText.setString("ROUND COMPLETE!");
     m_winText.setCharacterSize(50);
     m_winText.setFillColor(sf::Color::Blue);
-    m_winText.setPosition({ -1000.f, 100.f });  // outside of view
+    m_winText.setPosition({ -1200.f, 100.f });  // outside of view
 
     m_highScoreText.setFont(m_font);
-    m_highScoreText.setString("High Score: ");
-    m_highScoreText.setCharacterSize(50);
-    m_highScoreText.setFillColor(sf::Color::Blue);
-    m_highScoreText.setPosition({ 100.f, 100.f });
-
+    m_highScoreText.setString("High Scores: ");
+    m_highScoreText.setCharacterSize(30);
+    m_highScoreText.setFillColor(sf::Color::Black);
+    m_highScoreText.setPosition({ -1200.f, 200.f });
 
     // setup goal
     m_goal.setSize({ 50, 50 });
@@ -116,16 +115,6 @@ void Level::UpdateCamera()
     m_timerText.setPosition({ viewTopLeft.x + margin, viewTopLeft.y + viewSize.y - margin });
 
     m_window.setView(view);
-}
-
-bool Level::CheckWinCondition()
-{
-    for (auto s : m_sheepList) if (s->isAlive()) return false;
-    m_winText.setPosition({ 100.f, 100.f });
-
-    displayScoreboard();
- 
-    return true;
 }
 
 
@@ -197,13 +186,15 @@ void Level::displayScoreboard()
 
     }
 
-
     std::string line;
     std::string scoreboardString = "High Scores:\n";
 
     while (std::getline(inputFile, line))
     {
+
+        // Load each string so they are on seperate lines
         scoreboardString += line + "\n";
+
     }
 
     inputFile.close();
@@ -235,10 +226,20 @@ void Level::update(float dt)
     {
 
         m_isGameOver = true;
-        writeHighScore(timeElapsed);
 
+        // Write, then display the current score
+        writeHighScore(timeElapsed);
+        displayScoreboard();
     }
 
+}
+
+bool Level::CheckWinCondition()
+{
+    for (auto s : m_sheepList) if (s->isAlive()) return false;
+    m_winText.setPosition({ 100.f, 100.f });
+
+    return true;
 }
 
 // Render level
