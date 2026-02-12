@@ -10,7 +10,8 @@ Level::Level(sf::RenderWindow& hwnd, Input& in) :
 
     // Initialise the Player (Rabbit)
     m_playerRabbit = new Rabbit();
-    m_playerRabbit->setPosition({ 40.f, 40.f });  // hardcoded. FOR NOW!
+    /*m_playerRabbit->setPosition({40.f, 40.f}); */
+    loadLevel("data/level1.txt");
     if (!m_rabbitTexture.loadFromFile("gfx/rabbit_sheet.png")) std::cerr << "no rabbit texture";
     if (!m_sheepTexture.loadFromFile("gfx/sheep_sheet.png")) std::cerr << "no sheep texture";
     m_playerRabbit->setSize({ 32,32 });
@@ -20,13 +21,13 @@ Level::Level(sf::RenderWindow& hwnd, Input& in) :
 
 
     // Initialise Sheep (initial position AND pointer to the rabbit
-    for (int i = 0; i < 3; i++)
+    /*for (int i = 0; i < 3; i++)
     {
         m_sheepList.push_back(new Sheep(sf::Vector2f(200.f + 100 * i, 400.f - 100 * i), m_playerRabbit));
         m_sheepList[i]->setTexture(&m_sheepTexture);
         m_sheepList[i]->setSize({ 32,32 });
         m_sheepList[i]->setWorldSize(levelSize.x, levelSize.y);
-    }
+    }*/
 
     // Initialise Timer
     m_gameTimer.restart();
@@ -60,7 +61,7 @@ Level::Level(sf::RenderWindow& hwnd, Input& in) :
     m_goal.setCollisionBox({ { 0,0 }, { 50,50 } });
 
     // setup walls
-    for (int i = 0; i < 2; i++)
+    /*for (int i = 0; i < 2; i++)
     {
         GameObject wall;
         wall.setPosition({ 100.f + i * 600, 100.f});
@@ -68,11 +69,10 @@ Level::Level(sf::RenderWindow& hwnd, Input& in) :
         wall.setFillColor(sf::Color::Black);
         wall.setCollisionBox({ { 0,0 }, { 50,300 } });
         m_walls.push_back(wall);
-    }
+    }*/
 
     m_bgFarm.setFillColor(sf::Color::Green);
     m_bgFarm.setSize(levelSize);
-    
 
 }
 
@@ -86,6 +86,39 @@ Level::~Level()
 		delete s;
 	}
 	m_sheepList.clear();
+}
+
+void Level::loadLevel(std::string filename, sf::Vector2f worldSize)
+{
+
+    std::ifstream inputFile("data/level1.txt");
+    std::string levelData;
+    std::vector interestedIn = { "RABBIT", "SHEEP", "SHEEP", "WALL", "WALL", "GOAL"};
+    float xPosition, yPosition, width, height;
+
+    while (inputFile >> levelData)
+    {
+
+        if (levelData == "RABBIT")
+            inputFile >> xPosition >> yPosition;
+
+        if (levelData == "SHEEP")
+            inputFile >> xPosition >> yPosition;
+
+        if (levelData == "SHEEP")
+            inputFile >> xPosition >> yPosition;
+
+        if (levelData == "WALL")
+            inputFile >> xPosition >> yPosition >> width >> height;
+
+        if (levelData == "WALL")
+            inputFile >> xPosition >> yPosition >> width >> height;
+
+        if (levelData == "GOAL")
+            inputFile >> xPosition >> yPosition >> width >> height;
+
+    }
+
 }
 
 void Level::UpdateCamera()

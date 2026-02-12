@@ -19,6 +19,9 @@ public:
 	void render() override;
 
 private:
+
+    void loadLevel(std::string filename, sf::Vector2f worldSize);
+
     void UpdateCamera();
     bool CheckWinCondition();
     void manageCollisions();
