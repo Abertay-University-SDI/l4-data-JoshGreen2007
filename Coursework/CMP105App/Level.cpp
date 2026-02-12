@@ -164,6 +164,18 @@ void Level::manageCollisions()
     }
 }
 
+void Level::writeHighScore(float time)
+{
+
+    std::ofstream file_to_write_to("data/highScore.txt", std::ios::app);
+    if (file_to_write_to.is_open())
+        file_to_write_to << std::fixed << std::setprecision(2) << time << "\n";
+    else
+        std::cerr << "ERROR: Failed to open highScore.txt";
+    file_to_write_to.close();
+
+}
+
 // Update game objects
 void Level::update(float dt)
 {
@@ -182,7 +194,13 @@ void Level::update(float dt)
 
     manageCollisions();
     UpdateCamera();
-    m_isGameOver = CheckWinCondition();
+    if (CheckWinCondition() && !m_isGameOver)
+    {
+
+        m_isGameOver = true;
+        writeHighScore(timeElapsed);
+
+    }
 
 }
 

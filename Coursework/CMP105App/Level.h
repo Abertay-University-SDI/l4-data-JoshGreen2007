@@ -1,5 +1,8 @@
 #pragma once
 
+#include <iomanip>
+#include <fstream>
+
 #include "Framework/BaseLevel.h"
 #include "Framework/GameObject.h"
 #include "Framework/Collision.h"
@@ -19,6 +22,8 @@ private:
     void UpdateCamera();
     bool CheckWinCondition();
     void manageCollisions();
+
+    void writeHighScore(float time);
 
     sf::View m_cameraView;
 
