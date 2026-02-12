@@ -1,7 +1,7 @@
 #include "Level.h"
 
 Level::Level(sf::RenderWindow& hwnd, Input& in) :
-    BaseLevel(hwnd, in), m_timerText(m_font), m_winText(m_font)
+    BaseLevel(hwnd, in), m_timerText(m_font), m_winText(m_font), m_highScoreText(m_font)
 {
     m_isGameOver = false;
 
@@ -46,6 +46,12 @@ Level::Level(sf::RenderWindow& hwnd, Input& in) :
     m_winText.setCharacterSize(50);
     m_winText.setFillColor(sf::Color::Blue);
     m_winText.setPosition({ -1000.f, 100.f });  // outside of view
+
+    m_highScoreText.setFont(m_font);
+    m_highScoreText.setString("High Score: ");
+    m_highScoreText.setCharacterSize(50);
+    m_highScoreText.setFillColor(sf::Color::Blue);
+    m_highScoreText.setPosition({ 100.f, 100.f });
 
 
     // setup goal
@@ -116,6 +122,8 @@ bool Level::CheckWinCondition()
 {
     for (auto s : m_sheepList) if (s->isAlive()) return false;
     m_winText.setPosition({ 100.f, 100.f });
+
+    displayScoreboard();
  
     return true;
 }
@@ -176,6 +184,35 @@ void Level::writeHighScore(float time)
 
 }
 
+void Level::displayScoreboard()
+{
+
+    std::ifstream inputFile("data/highScore.txt");
+    std::vector<std::string> highScores;
+    if (!inputFile.is_open())
+    {
+        std::cerr << "Failed to open highScore.txt";
+        m_highScoreText.setString("No highscores yet!");
+        return;
+
+    }
+
+
+    std::string line;
+    std::string scoreboardString = "High Scores:\n";
+
+    while (std::getline(inputFile, line))
+    {
+        scoreboardString += line + "\n";
+    }
+
+    inputFile.close();
+
+    m_highScoreText.setString(scoreboardString);
+    m_highScoreText.setPosition({ 100.f, 160.f });
+
+}
+
 // Update game objects
 void Level::update(float dt)
 {
@@ -217,7 +254,11 @@ void Level::render()
     }
     m_window.draw(*m_playerRabbit);
     m_window.draw(m_timerText);
-    m_window.draw(m_winText);
+    if (m_isGameOver)
+    {
+        m_window.draw(m_winText);
+        m_window.draw(m_highScoreText);
+    }
     
 	endDraw();
 }

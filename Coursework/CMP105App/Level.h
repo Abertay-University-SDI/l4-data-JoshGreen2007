@@ -24,6 +24,7 @@ private:
     void manageCollisions();
 
     void writeHighScore(float time);
+    void displayScoreboard();
 
     sf::View m_cameraView;
 
@@ -45,5 +46,6 @@ private:
     sf::Font m_font;
     sf::Text m_timerText;
     sf::Text m_winText;
+    sf::Text m_highScoreText;
 	
 };
